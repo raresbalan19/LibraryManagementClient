@@ -1,0 +1,68 @@
+        Salutare!!
+
+
+    Scurtă prezentare
+
+    Acest program funcționează ca un client pentru un sistem de gestionarea
+unei biblioteci. Utilizează socket-uri pentru a comunica cu un server printr-o
+rețea și gestionează stări de autentificare ale utilizatorilor, acces la bibliotecă
+și operațiuni cu cărțile.
+
+    Biblioteca de parsare JSON: Parson
+
+    Am ales să utilizez biblioteca Parson pentru manipularea JSON-urilor datorită
+simplității și eficienței acesteia în cadrul proiectelor C. Biblioteca oferă funcții
+pentru parsarea string-urilor JSON, construirea de noi obiecte JSON și serializarea
+acestora. Utilizarea sa a fost esențială pentru gestionarea eficientă a datelor transmise
+între client și server, mai ales în cadrul operațiunilor de autentificare și gestionare a cărților.
+
+    helpers.c
+   Acesta conține implementări ale funcțiilor necesare pentru gestionarea conexiunilor de rețea,
+trimiterea cererilor, primirea răspunsurilor și extragerea specifică a datelor din aceste răspunsuri.
+    
+    requests.c
+    Aici sunt implementate funcțiile specifice pentru construirea cererilor HTTP (GET, POST, DELETE).
+Fiecare funcție construiește cereri adecvate pentru diferite scenarii de utilizare ale API-ului, incluzând
+autentificarea și cookie-urile când este necesar.
+
+    client.c
+    Definirea Conexiunii: Adresa IP a serverului, portul și endpoint-urile API sunt definite la începutul
+fișierului pentru a fi ușor accesibile și modificabile.
+    
+    main:
+    Inițializează stările necesare (de exemplu: cookie-uri, token-uri) și procesează inputul utilizatorului
+într-un ciclu infinit până când primește comanda de ieșire (exit). Comenzile sunt procesate prin compararea
+stringurilor și funcțiile corespunzătoare sunt apelate în funcție de comanda introdusă.
+    register:
+    Utilizatorii se pot înregistra introducând un nume de utilizator și o parolă. Se verifică dacă există un
+cookie de sesiune setat, semn că un utilizator este deja autentificat. Dacă nu, se deschide o conexiune socket la server,
+se trimite o cerere POST cu datele utilizatorului în format JSON. Serverul răspunde cu codul de stare HTTP, indicând succesul
+sau eșecul operațiunii.
+    login:
+    Similar cu înregistrarea, se folosește o cerere POST la server cu numele de utilizator și parola. Dacă răspunsul este
+pozitiv, un cookie de sesiune este salvat pentru utilizare în cererile ulterioare.
+    enter_library:
+     Verifică dacă utilizatorul este autentificat și permite accesul la funcțiile bibliotecii. Se trimite o cerere GET la
+server. Dacă autentificarea este confirmată, serverul răspunde cu un token de autentificare.
+    get_books:
+    Afișează lista de cărți disponibile în bibliotecă. Se folosește o cerere GET cu tokenul de autentificare primit anterior.
+Răspunsul include detalii ale cărților în format JSON.
+    get_book:
+    Returnează detalii despre o carte specifică, utilizând ID-ul său. Cererea GET include ID-ul cărții ca parte a URL-ului.
+Răspunsul serverului poate conține detaliile cărții sau o eroare dacă ID-ul este invalid.
+    add_book:
+    Permite adăugarea unei cărți noi în bibliotecă. Se trimite o cerere POST cu detaliile cărții în format JSON. Validarea
+datelor se face pe client înainte de trimiterea la server. Prin validare, eu am considerat cazurile când titlul cărții nu conține
+nimic în ea sau doar spații la fel și pentru restul câmpurilor. Pentru restul câmpurilor, cu excepția titlului cărții care putea să conțină
+cifre și a numărului de pagini care trebuia să fie un număr, am pus condiții ca acestea să nu conțină cifre.
+    delete_book:
+    Permite eliminarea unei cărți din bibliotecă folosind ID-ul său. Cererea DELETE, care se aseamănă foarte mult cu cea de GET în implementare,
+este trimisă la server cu ID-ul cărții. Răspunsul indică succesul operațiunii.
+    logout:
+    Permite unui utilizator autentificat să se deconecteze. Se trimite o cerere GET la server pentru a încheia sesiunea. Cookie-ul de sesiune este
+șters, și astfel, starea de autentificare a utilizatorului este resetată.
+    exit:
+    Se iese din ciclul infinit.
+
+
+    Zi frumoasă!  
