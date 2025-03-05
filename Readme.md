@@ -1,5 +1,3 @@
-Library Management Client
-
 ## Checker
 
 Dependencies:
